@@ -1,0 +1,55 @@
+// Prisma スキーマ
+// マイグレーションは手動確認後に実行すること:
+//   npx prisma migrate dev --name init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// セッション単位の学習者（匿名OK）
+model Session {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  progresses  Progress[]
+  quizResults QuizResult[]
+}
+
+// チャプター・レッスンの進捗
+model Progress {
+  id          String    @id @default(cuid())
+  sessionId   String
+  chapterId   String // "chapter-01" など
+  lessonId    String? // "lesson-01-01" など（null = チャプター完了フラグ）
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  session Session @relation(fields: [sessionId], references: [id])
+
+  @@unique([sessionId, chapterId, lessonId])
+  @@index([sessionId])
+}
+
+// クイズ結果
+model QuizResult {
+  id        String   @id @default(cuid())
+  sessionId String
+  chapterId String
+  score     Int // 正解数
+  total     Int // 問題数
+  passed    Boolean // 合格判定（score / total >= 0.7 など）
+  answers   Json // 各問題の回答記録
+  createdAt DateTime @default(now())
+
+  session Session @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId, chapterId])
+}
