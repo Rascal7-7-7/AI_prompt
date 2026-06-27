@@ -6,6 +6,7 @@ import { chapter04 } from './chapters/chapter-04'
 import { chapter05 } from './chapters/chapter-05'
 import { chapter06 } from './chapters/chapter-06'
 import { chapter07 } from './chapters/chapter-07'
+import { chapter08 } from './chapters/chapter-08'
 
 /** 全チャプター（番号順） */
 export const chapters: Chapter[] = [
@@ -16,6 +17,7 @@ export const chapters: Chapter[] = [
   chapter05,
   chapter06,
   chapter07,
+  chapter08,
 ]
 
 /** ID からチャプターを取得 */
